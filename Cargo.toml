@@ -1,0 +1,7 @@
+[package]
+name = "c_lexer"
+version = "0.1.0"
+authors = ["冬冬 李 <lsongzhi@163.com>"]
+edition = "2018"
+
+[dependencies]
