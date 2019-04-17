@@ -89,3 +89,57 @@ pub fn parse_char(input: &[u8], c_src: &mut usize) -> Token {
     debug_assert_eq!(1, res.len());
     Token::NumericLiteral(Number::new(res.chars().next().unwrap() as u32, 0, 0, 10))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::super::*;
+
+    should!(
+        string_single,
+        "\"cau\"",
+        vec![Token::StringLiteral(String::from("cau")), Token::EOF]
+    );
+
+    should!(
+        string_single_escape,
+        "\"c\\'au\"",
+        vec![Token::StringLiteral(String::from("c'au")), Token::EOF]
+    );
+
+    should!(
+        string_single_unescape,
+        "'\t'",
+        vec![Token::NumericLiteral(Number::new(b'\t' as u32, 0, 0, 10)), Token::EOF]
+    );
+
+    should!(
+        string_double,
+        r#""cau""#,
+        vec![Token::StringLiteral(String::from("cau")), Token::EOF]
+    );
+
+    should!(
+        string_double_escape,
+        r#""c\"au""#,
+        vec![Token::StringLiteral(String::from("c\"au")), Token::EOF]
+    );
+
+    should!(
+        string_double_unescape,
+        "\"\t\"",
+        vec![Token::StringLiteral(String::from("\t")), Token::EOF]
+    );
+
+    should!(
+        string_unicode,
+        "\"\\u004E\"",
+        vec![Token::StringLiteral(String::from("N")), Token::EOF]
+    );
+
+    should!(
+        string_hex,
+        "\"\\x4E\"",
+        vec![Token::StringLiteral(String::from("N")), Token::EOF]
+    );
+
+}
