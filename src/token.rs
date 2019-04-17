@@ -84,6 +84,8 @@ pub enum Token {
     ELLIPSIS,                    // ...
     EnumerationConstant(String), // TODO: add check
     LineTerminator,
+    EOF,
+
     TYPEDEF,
     EXTERN,
     STATIC,
