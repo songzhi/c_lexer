@@ -213,15 +213,15 @@ impl StateMachineWrapper {
 
             // Multiline comment
             (StateMachineWrapper::MultiLineComment(s), Equivalence::Multi) =>
-                StateMachineWrapper::MultiLineCommentMulti(s.into()),
-            (StateMachineWrapper::MultiLineCommentMulti(s), Equivalence::Multi) =>
-                StateMachineWrapper::MultiLineCommentMulti(s),
-            (StateMachineWrapper::MultiLineCommentMulti(s), Equivalence::Slash) =>
+                StateMachineWrapper::MultiLineCommentStar(s.into()),
+            (StateMachineWrapper::MultiLineCommentStar(s), Equivalence::Multi) =>
+                StateMachineWrapper::MultiLineCommentStar(s),
+            (StateMachineWrapper::MultiLineCommentStar(s), Equivalence::Slash) =>
                 StateMachineWrapper::MultiLineCommentAcc(s.into()),
 
             (StateMachineWrapper::MultiLineComment(s), _) =>
                 StateMachineWrapper::MultiLineComment(s),
-            (StateMachineWrapper::MultiLineCommentMulti(s), _) =>
+            (StateMachineWrapper::MultiLineCommentStar(s), _) =>
                 StateMachineWrapper::MultiLineComment(s.into()),
             // Identifier
             (StateMachineWrapper::InputElementDiv(s), Equivalence::Letter) =>
