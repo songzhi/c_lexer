@@ -131,7 +131,7 @@ pub enum Token {
     ThreadLocal,
 }
 
-const TOKENS: phf::Map<&'static str, Token> = phf_map! {
+pub const TOKENS: phf::Map<&'static str, Token> = phf_map! {
     "{" => Token::LBrace,
     "}" => Token::RBrace,
     "(" => Token::LParen,
