@@ -551,6 +551,12 @@ fn state_match(
         // comment and replace comment with line terminator
         StateMachineWrapper::SingleLineCommentAcc(_) => Some(Token::LineTerminator),
         StateMachineWrapper::MultiLineCommentAcc(_) => None,
+        StateMachineWrapper::SlashAcc(_) =>
+            if input[*c_src - token_len as usize + 1] == b'=' {
+                Some(Token::DivAssign)
+            } else {
+                Some(Token::Slash)
+            },
         StateMachineWrapper::String(_) => Some(string::parse_string(input, c_src)),
         StateMachineWrapper::Char(_) => Some(string::parse_char(input, c_src)),
         StateMachineWrapper::BinaryAcc(_) => Some(parse_number_radix(input, c_src, token_len, 2)?),
@@ -583,4 +589,152 @@ fn parse_dot(input: &[u8], c_src: &mut usize) -> Token {
     }
 
     Token::Dot
+}
+
+#[cfg(test)]
+mod tests {
+    use super::super::*;
+
+    should!(
+        lineterminator_all,
+        "\u{000A}\u{000D}",
+        vec![Token::LineTerminator, Token::LineTerminator, Token::EOF]
+    );
+
+    should!(
+        single_comment,
+        "// rest // of comment \n",
+        vec![Token::LineTerminator, Token::EOF]
+    );
+
+    should!(multi_comment, "/** rest // of comment */", vec![Token::EOF]);
+
+    should!(
+        multi_comment_with_newline,
+        "/** rest // \n of comment */",
+        vec![Token::EOF]
+    );
+
+    should!(left_curly, "{", vec![Token::LBrace, Token::EOF]);
+
+    should!(right_curly, "}", vec![Token::RBrace, Token::EOF]);
+
+    should!(left_round, "(", vec![Token::LParen, Token::EOF]);
+
+    should!(right_round, ")", vec![Token::RParen, Token::EOF]);
+
+    should!(left_square, "[", vec![Token::LBracket, Token::EOF]);
+
+    should!(right_square, "]", vec![Token::RBracket, Token::EOF]);
+
+    should!(dot, ".", vec![Token::Dot, Token::EOF]);
+
+    should!(twodot, "..", vec![Token::Dot, Token::Dot, Token::EOF]);
+
+    should!(tripledot, "...", vec![Token::ELLIPSIS, Token::EOF]);
+
+    should!(
+        fourdot,
+        "....",
+        vec![Token::ELLIPSIS, Token::Dot, Token::EOF]
+    );
+
+    should!(lesser, "< ", vec![Token::Lt, Token::EOF]);
+
+    should!(lesser_double, "<< ", vec![Token::LeftOp, Token::EOF]);
+
+    should!(lesser_equal, "<= ", vec![Token::LeOp, Token::EOF]);
+
+    should!(
+        lesser_equal_double,
+        "<<= ",
+        vec![Token::LeftAssign, Token::EOF]
+    );
+
+    should!(bigger, "> ", vec![Token::Gt, Token::EOF]);
+
+    should!(bigger_equal, ">= ", vec![Token::GeOp, Token::EOF]);
+
+    should!(bigger_double, ">> ", vec![Token::RightOp, Token::EOF]);
+
+
+    should!(
+        bigger_double_equal,
+        ">>= ",
+        vec![Token::RightAssign, Token::EOF]
+    );
+
+
+    should!(assign, "= ", vec![Token::Assign, Token::EOF]);
+
+    should!(ptr_op, "-> ", vec![Token::PtrOp, Token::EOF]);
+
+    should!(assign_double, "== ", vec![Token::EqOp, Token::EOF]);
+
+    should!(exclamation, "! ", vec![Token::Exclamation, Token::EOF]);
+
+    should!(
+        exclamation_assign,
+        "!= ",
+        vec![Token::NeOp, Token::EOF]
+    );
+
+    should!(plus, "+ ", vec![Token::Plus, Token::EOF]);
+
+    should!(plus_dobule, "++ ", vec![Token::IncOp, Token::EOF]);
+
+    should!(plus_assign, "+= ", vec![Token::AddAssign, Token::EOF]);
+
+    should!(minus, "- ", vec![Token::Minus, Token::EOF]);
+
+    should!(minus_double, "-- ", vec![Token::DecOp, Token::EOF]);
+
+    should!(minus_assign, "-= ", vec![Token::SubAssign, Token::EOF]);
+
+    should!(star, "* ", vec![Token::Multi, Token::EOF]);
+
+    should!(star_assign, "*= ", vec![Token::MulAssign, Token::EOF]);
+
+
+    should!(percent, "% ", vec![Token::Mod, Token::EOF]);
+
+    should!(
+        percent_assign,
+        "%= ",
+        vec![Token::ModAssign, Token::EOF]
+    );
+
+    should!(and, "& ", vec![Token::SingleAnd, Token::EOF]);
+
+    should!(and_double, "&& ", vec![Token::AndOp, Token::EOF]);
+
+    should!(and_assign, "&= ", vec![Token::AndAssign, Token::EOF]);
+
+    should!(or, "| ", vec![Token::InclusiveOr, Token::EOF]);
+
+    should!(or_double, "|| ", vec![Token::OrOp, Token::EOF]);
+
+    should!(or_assign, "|= ", vec![Token::OrAssign, Token::EOF]);
+
+    should!(tilde, "~ ", vec![Token::Tilde, Token::EOF]);
+
+    should!(colon, ": ", vec![Token::Colon, Token::EOF]);
+
+    should!(questionmark, "?", vec![Token::QuestionMark, Token::EOF]);
+
+    should!(caret, "^ ", vec![Token::ExclusiveOr, Token::EOF]);
+
+    should!(caret_assign, "^= ", vec![Token::XorAssign, Token::EOF]);
+
+    should!(slash_assign, "/= ", vec![Token::DivAssign, Token::EOF]);
+
+    should!(slash, "/ ", vec![Token::Slash, Token::EOF]);
+
+    should!(keyowrd, "auto ", vec![Token::AUTO, Token::EOF]);
+
+
+    should!(comma, ", ", vec![Token::Comma, Token::EOF]);
+
+    // should_fail!(string_single, "'cau\n'",
+    // vec![Token::StringLiteral(String::from("cau")), Token::EOF]);
 }
