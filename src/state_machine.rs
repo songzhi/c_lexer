@@ -54,7 +54,7 @@ enum StateMachineWrapper {
     ColonAcc(StateMachine<ColonAcc>),
     ExclusiveOrAcc(StateMachine<ExclusiveOrAcc>),
     String(StateMachine<String>),
-    //    Char(StateMachine<Char>),
+    Char(StateMachine<Char>),
     BinaryAcc(StateMachine<BinaryAcc>),
     OctalAcc(StateMachine<OctalAcc>),
     HexAcc(StateMachine<HexAcc>),
@@ -242,7 +242,7 @@ impl StateMachineWrapper {
             (StateMachineWrapper::InputElementDiv(s), Equivalence::Colon) => StateMachineWrapper::Colon(s.into()),
             (StateMachineWrapper::Colon(s), _) => StateMachineWrapper::ColonAcc(s.into()),
 
-            (StateMachineWrapper::InputElementDiv(s), Equivalence::Questionmark) => StateMachineWrapper::QuestionMark(s.into()),
+            (StateMachineWrapper::InputElementDiv(s), Equivalence::QuestionMark) => StateMachineWrapper::QuestionMark(s.into()),
             (StateMachineWrapper::QuestionMark(s), _) => StateMachineWrapper::QuestionMarkAcc(s.into()),
             (StateMachineWrapper::InputElementDiv(s), Equivalence::Tilde) => StateMachineWrapper::Tilde(s.into()),
 
@@ -262,7 +262,6 @@ impl StateMachineWrapper {
 
             // Assign
             (StateMachineWrapper::InputElementDiv(s), Equivalence::Assign) => StateMachineWrapper::Assign(s.into()),
-            (StateMachineWrapper::Assign(s), Equivalence::Gt) => StateMachineWrapper::Assign(s),
             (StateMachineWrapper::Assign(s), Equivalence::Assign) => StateMachineWrapper::Assign(s),
             (StateMachineWrapper::Assign(s), _) => StateMachineWrapper::AssignAcc(s.into()),
 
@@ -283,6 +282,7 @@ impl StateMachineWrapper {
             // Minus
             (StateMachineWrapper::InputElementDiv(s), Equivalence::Minus) => StateMachineWrapper::Minus(s.into()),
             (StateMachineWrapper::Minus(s), Equivalence::Minus) => StateMachineWrapper::Minus(s),
+            (StateMachineWrapper::Minus(s), Equivalence::Gt) => StateMachineWrapper::Minus(s),
             (StateMachineWrapper::Minus(s), Equivalence::Assign) => StateMachineWrapper::Minus(s),
             (StateMachineWrapper::Minus(s), _) => StateMachineWrapper::MinusAcc(s.into()),
 
@@ -299,14 +299,14 @@ impl StateMachineWrapper {
             (StateMachineWrapper::Mod(s), _) => StateMachineWrapper::ModAcc(s.into()),
 
             // and
-            (StateMachineWrapper::InputElementDiv(s), Equivalence::And) => StateMachineWrapper::And(s.into()),
-            (StateMachineWrapper::And(s), Equivalence::And) => StateMachineWrapper::And(s),
+            (StateMachineWrapper::InputElementDiv(s), Equivalence::SingleAnd) => StateMachineWrapper::And(s.into()),
+            (StateMachineWrapper::And(s), Equivalence::SingleAnd) => StateMachineWrapper::And(s),
             (StateMachineWrapper::And(s), Equivalence::Assign) => StateMachineWrapper::And(s),
             (StateMachineWrapper::And(s), _) => StateMachineWrapper::AndAcc(s.into()),
             // or
-            (StateMachineWrapper::InputElementDiv(s), Equivalence::Or) => StateMachineWrapper::Or(s.into()),
+            (StateMachineWrapper::InputElementDiv(s), Equivalence::InclusiveOr) => StateMachineWrapper::Or(s.into()),
 
-            (StateMachineWrapper::Or(s), Equivalence::Or) => StateMachineWrapper::Or(s),
+            (StateMachineWrapper::Or(s), Equivalence::InclusiveOr) => StateMachineWrapper::Or(s),
             (StateMachineWrapper::Or(s), Equivalence::Assign) => StateMachineWrapper::Or(s),
             (StateMachineWrapper::Or(s), _) => StateMachineWrapper::OrAcc(s.into()),
             // ExclusiveOr
@@ -317,6 +317,8 @@ impl StateMachineWrapper {
 
             // string
             (StateMachineWrapper::InputElementDiv(s), Equivalence::String) => StateMachineWrapper::String(s.into()),
+
+            (StateMachineWrapper::InputElementDiv(s), Equivalence::Char) => StateMachineWrapper::Char(s.into()),
             // numbers
             (StateMachineWrapper::InputElementDiv(s), Equivalence::Zero) => StateMachineWrapper::SawZero(s.into()),
 
@@ -460,7 +462,7 @@ impl StateMachineWrapper {
             StateMachineWrapper::ColonAcc(n) => n.is_final(),
             StateMachineWrapper::ExclusiveOrAcc(n) => n.is_final(),
             StateMachineWrapper::String(n) => n.is_final(),
-//            StateMachineWrapper::Char(n) => n.is_final(),
+            StateMachineWrapper::Char(n) => n.is_final(),
             StateMachineWrapper::BinaryAcc(n) => n.is_final(),
             StateMachineWrapper::OctalAcc(n) => n.is_final(),
             StateMachineWrapper::HexAcc(n) => n.is_final(),
