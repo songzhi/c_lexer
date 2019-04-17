@@ -6,13 +6,13 @@ macro_rules! should {
             use crate::Lexer;
 
             let input = &$left[..];
-            let result = Lexer::lex_tokens(input).unwrap();
+            let result = Lexer::lex(input).unwrap();
             assert_eq!(result, $right);
         }
     };
 }
 
-macro_rules! Accept {
+macro_rules! accept_state {
     ($name:ident) => {
         #[derive(Debug)]
         pub struct $name;
@@ -24,7 +24,7 @@ macro_rules! Accept {
     };
 }
 
-macro_rules! State {
+macro_rules! state {
     ($name:ident) => {
         #[derive(Debug)]
         pub struct $name;
@@ -36,7 +36,7 @@ macro_rules! State {
     };
 }
 
-macro_rules! Edge {
+macro_rules! edge {
     ($from:ty, $to:ident) => {
         impl From<StateMachine<$from>> for StateMachine<$to> {
             fn from(_st: StateMachine<$from>) -> Self {
