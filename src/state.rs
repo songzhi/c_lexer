@@ -20,7 +20,6 @@ accept_state!(ExclamationAcc);
 accept_state!(HELL);
 accept_state!(HexAcc);
 accept_state!(Identifier);
-accept_state!(Indentifier);
 accept_state!(LBraceAcc);
 accept_state!(LtAcc);
 accept_state!(LineTerminator);

@@ -78,3 +78,32 @@ pub fn parse_identifier(input: &[u8], c_src: &mut usize) -> Token {
         .cloned()
         .unwrap_or_else(|| Token::Identifier(IStr::new(ident)))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::super::*;
+    use ::internship::IStr;
+
+    should!(
+        parsing_after_token,
+        "*=a ",
+        vec![
+            Token::MulAssign,
+            Token::Identifier(IStr::new("a")),
+            Token::EOF
+        ]
+    );
+
+    should!(
+        parsing_after_token_2,
+        "a( a1 ",
+        vec![
+            Token::Identifier(IStr::new("a")),
+            Token::LParen,
+            Token::Identifier(IStr::new("a1")),
+            Token::EOF
+        ]
+    );
+
+    should!(keyword, "auto ", vec![Token::AUTO, Token::EOF]);
+}
