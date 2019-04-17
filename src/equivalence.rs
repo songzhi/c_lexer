@@ -27,8 +27,8 @@ pub enum Equivalence {
     InclusiveOr,  // |
     ExclusiveOr,  // ^
     Mod,          // %
-    DoubleString, // "
-    SingleString, // '
+    Char,         // "
+    String,       // '
     EightNine,    // 8-9
     Zero,         // 0
     One,          // 1
@@ -62,8 +62,8 @@ const fn gen_equivalence() -> EquivalenceTable {
     res['/' as usize] = Equivalence::Slash;
     res['`' as usize] = Equivalence::BackTick;
     res = punctuators(res);
-    res['\'' as usize] = Equivalence::SingleString;
-    res['"' as usize] = Equivalence::DoubleString;
+    res['\'' as usize] = Equivalence::Char;
+    res['"' as usize] = Equivalence::String;
     res = numbers(res);
     res
 }
