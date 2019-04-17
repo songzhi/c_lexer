@@ -1,3 +1,5 @@
+use internship::IStr;
+
 /// Number representation of parsed number
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub struct Number {
@@ -50,7 +52,7 @@ pub enum Token {
     InclusiveOr,  // |
     ExclusiveOr,  // ^
     Mod,          // %
-    IDENTIFIER(String),
+    Identifier(IStr),
     Number(Number),
     StringLiteral(String),
     FuncName,    // __func__
