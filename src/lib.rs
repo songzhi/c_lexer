@@ -4,3 +4,5 @@
 extern crate phf;
 
 mod token;
+#[macro_use]
+mod macros;
