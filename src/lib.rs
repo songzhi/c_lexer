@@ -16,6 +16,7 @@ mod number;
 mod string;
 mod state;
 mod equivalence;
+mod state_machine;
 pub mod error;
 /// Module for efficient string representation
 pub mod internship {
