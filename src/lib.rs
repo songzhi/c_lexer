@@ -14,6 +14,8 @@ mod macros;
 mod identifier;
 mod number;
 mod string;
+mod state;
+mod equivalence;
 pub mod error;
 /// Module for efficient string representation
 pub mod internship {

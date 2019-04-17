@@ -43,7 +43,7 @@ pub enum Token {
     Exclamation,  // !
     Plus,         // +
     Multi,        // *
-    Splash,       // /
+    Slash,       // /
     Colon,        // :
     QuestionMark, // ?
     Comma,        // ,
@@ -144,7 +144,7 @@ const TOKENS: phf::Map<&'static str, Token> = phf_map! {
     "!" => Token::Exclamation,
     "+" => Token::Plus,
     "*" => Token::Multi,
-    "/" => Token::Splash,
+    "/" => Token::Slash,
     ":" => Token::Colon,
     "?" => Token::QuestionMark,
     "," => Token::Comma,
