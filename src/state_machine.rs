@@ -504,3 +504,83 @@ impl StateMachineWrapper {
         }
     }
 }
+
+#[inline]
+pub fn parse(input: &str) -> Result<Vec<Token>, Error> {
+    let mut st = StateMachineWrapper::InputElementDiv(StateMachine::<InputElementDiv>::new());
+    let input = input.as_bytes();
+    let mut tokens = Vec::with_capacity(input.len());
+
+    let mut c_src: usize = 0;
+    let mut token_len: u64 = 0;
+    while c_src < input.len() {
+        while !st.is_final() {
+            let ch = unsafe { *input.get_unchecked(c_src) };
+            st = st.step(EQUIVALENCE_CLASS[ch as usize]);
+            c_src += 1;
+            token_len += 1;
+        }
+        let token = &input[c_src - token_len as usize..c_src - 1];
+        let token = unsafe { str::from_utf8_unchecked(token) };
+        let token = TOKENS
+            .get(token)
+            .cloned()
+            .or_else(|| state_match(st, input, &mut c_src, token_len).unwrap());
+        c_src -= 1;
+        if token.is_some() {
+            tokens.push(token.unwrap());
+        }
+
+        st = StateMachineWrapper::InputElementDiv(StateMachine::<InputElementDiv>::new());
+        token_len = 0;
+    }
+    Ok(tokens)
+}
+
+#[inline]
+fn state_match(
+    st: StateMachineWrapper,
+    input: &[u8],
+    c_src: &mut usize,
+    token_len: u64,
+) -> Result<Option<Token>, Error> {
+    let res = match st {
+        StateMachineWrapper::LineTerminator(_) => Some(Token::LineTerminator),
+        // LF after comment is not considered to be part of comment
+        // and should be left. We can parse it as part of single line
+        // comment and replace comment with line terminator
+        StateMachineWrapper::SingleLineCommentAcc(_) => Some(Token::LineTerminator),
+        StateMachineWrapper::MultiLineCommentAcc(_) => None,
+        StateMachineWrapper::String(_) => Some(string::parse_string(input, c_src)),
+        StateMachineWrapper::Char(_) => Some(string::parse_char(input, c_src)),
+        StateMachineWrapper::BinaryAcc(_) => Some(parse_number_radix(input, c_src, token_len, 2)?),
+        StateMachineWrapper::OctalAcc(_) => Some(parse_number_radix(input, c_src, token_len, 8)?),
+        StateMachineWrapper::HexAcc(_) => Some(parse_number_radix(input, c_src, token_len, 16)?),
+        StateMachineWrapper::DecimalAcc(_) => Some(parse_number(input, c_src, token_len)?),
+        StateMachineWrapper::DotPart(_) => Some(parse_dot(input, c_src)),
+        StateMachineWrapper::DecimalDigitsAcc(_) => {
+            Some(parse_number_decimal(input, c_src, token_len)?)
+        }
+        StateMachineWrapper::DecimalExponentSignedAcc(_) => {
+            Some(parse_exponent(input, c_src, token_len)?)
+        }
+        StateMachineWrapper::DecimalExponentAcc(_) => {
+            Some(parse_exponent(input, c_src, token_len)?)
+        }
+        StateMachineWrapper::Identifier(_) => Some(identifier::parse_identifier(input, c_src)),
+        _ => None,
+    };
+    *c_src += 1;
+    Ok(res)
+}
+
+#[inline]
+fn parse_dot(input: &[u8], c_src: &mut usize) -> Token {
+    let rest_len = input.len() - *c_src;
+    if rest_len >= 2 && input[*c_src] == b'.' && input[*c_src + 1] == b'.' {
+        *c_src += 2;
+        return Token::ELLIPSIS;
+    }
+
+    Token::Dot
+}
