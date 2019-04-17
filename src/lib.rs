@@ -13,6 +13,7 @@ pub mod token;
 mod macros;
 mod identifier;
 mod number;
+mod string;
 pub mod error;
 /// Module for efficient string representation
 pub mod internship {
