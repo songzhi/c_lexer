@@ -1,4 +1,4 @@
-use crate::token::Token;
+use crate::token::{Token, Number};
 use std::{char::from_u32, str};
 
 // # Performance
@@ -66,7 +66,7 @@ fn to_unescaped(input: String) -> String {
 }
 
 #[inline]
-pub fn parse_string(input: &[u8], c_src: &mut usize, type_: u8) -> Token {
+fn parse(input: &[u8], c_src: &mut usize, type_: u8) -> String {
     let mut token_len = 0;
     while input.len() - 1 > *c_src && (input[*c_src] != type_ || input[*c_src - 1] == b'\\') {
         *c_src += 1;
@@ -75,5 +75,17 @@ pub fn parse_string(input: &[u8], c_src: &mut usize, type_: u8) -> Token {
     let res = unsafe { str::from_utf8_unchecked(&input[*c_src - token_len..*c_src]).to_string() };
     let res = to_unescaped(res);
     *c_src += 1;
-    Token::StringLiteral(res)
+    res
+}
+
+#[inline]
+pub fn parse_string(input: &[u8], c_src: &mut usize) -> Token {
+    Token::StringLiteral(parse(input, c_src, b'"'))
+}
+
+#[inline]
+pub fn parse_char(input: &[u8], c_src: &mut usize) -> Token {
+    let res = parse(input, c_src, b'\'');
+    debug_assert_eq!(1, res.len());
+    Token::NumericLiteral(Number::new(res.chars().next().unwrap() as u32, 0, 0, 10))
 }

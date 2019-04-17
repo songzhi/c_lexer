@@ -158,6 +158,7 @@ Edge!(Or, OrAcc);
 Edge!(InputElementDiv, ExclusiveOr);
 Edge!(ExclusiveOr, ExclusiveOrAcc);
 Edge!(InputElementDiv, String);
+Edge!(InputElementDiv, Char);
 Edge!(And, AndAcc);
 Edge!(InputElementDiv, And);
 Edge!(InputElementDiv, SawZero);
@@ -419,7 +420,7 @@ impl StateMachineWrapper {
             (StateMachineWrapper::Binary(s), Equivalence::Zero) => StateMachineWrapper::Binary(s),
             (StateMachineWrapper::Binary(s), _) => StateMachineWrapper::BinaryAcc(s.into()),
             (_, Equivalence::HELL) => StateMachineWrapper::InputElementDiv(StateMachine::<InputElementDiv>::new()),
-            a => unreachable!("Invalid state:  :? ", a)
+            a => unreachable!("Invalid state:  {:?} ", a)
         }
     }
 
