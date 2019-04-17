@@ -53,7 +53,7 @@ pub enum Token {
     ExclusiveOr,  // ^
     Mod,          // %
     Identifier(IStr),
-    Number(Number),
+    NumericLiteral(Number),
     StringLiteral(String),
     FuncName,    // __func__
     SIZEOF,      // sizeof

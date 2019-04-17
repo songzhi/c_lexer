@@ -8,7 +8,14 @@
 #[macro_use]
 extern crate phf;
 
-mod token;
+pub mod token;
 #[macro_use]
 mod macros;
 mod identifier;
+mod number;
+pub mod error;
+/// Module for efficient string representation
+pub mod internship {
+    extern crate internship;
+    pub use internship::*;
+}

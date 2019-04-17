@@ -19,6 +19,6 @@ impl error::Error for Error {}
 
 impl From<num::ParseIntError> for Error {
     fn from(o: num::ParseIntError) -> Error {
-        Error::InternalError(box o)
+        Error::InternalError(Box::new(o))
     }
 }
