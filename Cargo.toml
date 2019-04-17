@@ -5,3 +5,5 @@ authors = ["冬冬 李 <lsongzhi@163.com>"]
 edition = "2018"
 
 [dependencies]
+phf = { version = "0.7", features = ["macros"] }
+lazy_static = "1.3"

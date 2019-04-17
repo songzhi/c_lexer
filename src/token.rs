@@ -1,3 +1,29 @@
+/// Number representation of parsed number
+#[derive(PartialEq, Debug, Clone, Copy)]
+pub struct Number {
+    /// Whole part of number
+    pub integer: u32,
+    /// Decimal part of number
+    pub decimal: u32,
+    /// Number behind E / e (exponent)
+    pub exponent: i64,
+    /// base of number
+    pub radix: u8,
+}
+
+impl Number {
+    /// Create instance of js representation of number
+    #[inline]
+    pub fn new(integer: u32, decimal: u32, exponent: i64, radix: u8) -> Self {
+        Self {
+            integer,
+            decimal,
+            exponent,
+            radix,
+        }
+    }
+}
+
 #[derive(PartialEq, Clone, Debug)]
 pub enum Token {
     LBrace,       // {
@@ -25,8 +51,7 @@ pub enum Token {
     ExclusiveOr,  // ^
     Mod,          // %
     IDENTIFIER(String),
-    IConstant(i64),
-    FConstant(f64),
+    Number(Number),
     StringLiteral(String),
     FuncName,    // __func__
     SIZEOF,      // sizeof
@@ -100,3 +125,51 @@ pub enum Token {
     StaticAssert,
     ThreadLocal,
 }
+
+const TOKENS: phf::Map<&'static str, Token> = phf_map! {
+    "{" => Token::LBrace,
+    "}" => Token::RBrace,
+    "(" => Token::LParen,
+    ")" => Token::RParen,
+    "[" => Token::LBracket,
+    "]" => Token::RBracket,
+    ";" => Token::Semicolon,
+    "=" => Token::EqOp,
+    "<" => Token::Lt,
+    ">" => Token::Gt,
+    "-" => Token::Minus,
+    "~" => Token::Tilde,
+    "!" => Token::Exclamation,
+    "+" => Token::Plus,
+    "*" => Token::Multi,
+    "/" => Token::Splash,
+    ":" => Token::Colon,
+    "?" => Token::QuestionMark,
+    "," => Token::Comma,
+    "." =>  Token::Dot,
+    "&" => Token::SingleAnd,
+    "|" => Token::InclusiveOr,
+    "^" => Token::ExclusiveOr,
+    "%" => Token::Mod,
+    "->" => Token::PtrOp,
+    "++" => Token::IncOp,
+    "--" => Token::DecOp,
+    "<<" => Token::LeftOp,
+    ">>" => Token::RightOp,
+    "<=" => Token::LeOp,
+    ">=" => Token::GeOp,
+    "==" => Token::EqOp,
+    "!=" => Token::NeOp,
+    "&&" => Token::AndOp,
+    "||" => Token::OrOp,
+    "*=" => Token::MulAssign,
+    "/=" => Token::DivAssign,
+    "%=" => Token::ModAssign,
+    "+=" => Token::AddAssign,
+    "-=" => Token::SubAssign,
+    "<<=" => Token::LeftAssign,
+    ">>=" => Token::RightAssign,
+    "&=" => Token::AndAssign,
+    "^=" => Token::XorAssign,
+    "|=" => Token::OrAssign,
+};
