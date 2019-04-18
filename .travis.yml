@@ -29,4 +29,3 @@ script:
   - cargo doc -p c_lexer
 after_success:
   - cargo coveralls --all
-  - cargo doc-upload --branch master

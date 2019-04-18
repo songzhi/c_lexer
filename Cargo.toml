@@ -16,3 +16,10 @@ internship = "0.6"
 
 [badges]
 travis-ci = { repository = "songzhi/c_lexer", branch = "master" }
+
+[profile.release]
+lto = true
+
+[profile.bench]
+debug = true
+lto = true
