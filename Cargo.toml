@@ -1,6 +1,6 @@
 [package]
 name = "c_lexer"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["lsongzhi <lsongzhi@163.com>"]
 repository = "https://github.com/songzhi/c_lexer"
 readme = "README.md"
