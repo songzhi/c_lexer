@@ -13,3 +13,6 @@ edition = "2018"
 [dependencies]
 phf = { version = "0.7", features = ["macros"] }
 internship = "0.6"
+
+[badges]
+travis-ci = { repository = "songzhi/c_lexer", branch = "master" }
